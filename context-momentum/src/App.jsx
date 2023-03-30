@@ -1,70 +1,24 @@
-import { useEffect, useState } from 'react';
-import './App.css';
+import { AppContext, AppProvider } from "./context/AppContext";
+import Time from "./components/Time";
+import Greeting from "./components/Greeting";
+import Phrase from "./components/Phrase";
+import "./App.css";
 
 const App = () => {
-  let myName = 'Fulano';
-
-  const [time, setTime] = useState('00:00');
-  const [greeting, setGreeting] = useState('--');
-  const [phrase, setPhrase] = useState('');
-  const [phraseAuthor, setPhraseAuthor] = useState('');
-
-  useEffect(() => {
-    const getPhrase = async () => {
-      const req = await fetch('https://allugofrases.herokuapp.com/frases/random');
-      const json = await req.json();
-      setPhrase(json.frase);
-      setPhraseAuthor(json.autor);
-    }
-    getPhrase();
-  }, []);
-
-  useEffect(() => {
-    let timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    updateGreeting();
-  }, [time]);
-
-  const updateTime = () => {
-    let now = new Date();
-    let hours = now.getHours();
-    let minutes = now.getMinutes();
-    let hourStr = hours < 10 ? '0' + hours : hours.toString();
-    let minStr = minutes < 10 ? '0' + minutes : minutes.toString();
-
-    setTime(`${hourStr}:${minStr}`);
-  }
-
-  const updateGreeting = () => {
-    let now = new Date();
-    let hours = now.getHours();
-    if (hours > 0 && hours < 12) {
-      setGreeting(`Bom dia, ${myName}.`);
-    } else if (hours >= 12 && hours < 18) {
-      setGreeting(`Boa tarde, ${myName}.`);
-    } else {
-      setGreeting(`Boa noite, ${myName}.`);
-    }
-  }
-
   return (
-    <div className="App">
-      <div className="top"></div>
-      <div className="middle">
-        <h1>{time}</h1>
-        <h3>{greeting}</h3>
-      </div>
-      <div className="bottom">
-        <div className="phrase">
-          "{phrase}"
-          <div className="author">{phraseAuthor}</div>
+    <AppProvider>
+      <div className="App">
+        <div className="top"></div>
+        <div className="middle">
+          <Time />
+          <Greeting myName="Pessoa" />
+        </div>
+        <div className="bottom">
+          <Phrase />
         </div>
       </div>
-    </div>
+    </AppProvider>
   );
-}
+};
 
 export default App;
